@@ -81,6 +81,7 @@ act.addEventListener('change', (e) => {
     activity.style.display = 'none';
   }
 })
+
 //disables blocks that have conflicting times if checkboxes are checked
 act.addEventListener('change', (e) => {
   const target = e.target;
@@ -97,9 +98,24 @@ act.addEventListener('change', (e) => {
   }
 })
 
+//display payment based on the payment options
+
+//display credit card with #credit-card div and hide paypal and bitcoin information
+
+//when paypal is chosen display info, hide cc and Bitcoin
+
+//when bitcoin is chosen display info, hide cc and PayPal
+
+
+
+
+
+
+
+
+
 
 //hides the input bar when the page first loads
 otherTitle.style.display = 'none';
-
 //sets focus to the name input when the page is first loaded
 document.getElementById("name").focus();
