@@ -154,7 +154,7 @@ function isValidEmail(email) {
 
 //credit card card Number (add conditional 13-16 numbers)
 function isValidCredit(credit) {
-  return /^\d{4}\D*\d{4}\D*\d{4}\D*\d{4}$/.test(credit);
+  return /^(\d{16}|\d{15}|\d{14}|\d{13})$/.test(credit);
 }
 //zip Code
 function isValidZip(zip) {
@@ -210,10 +210,26 @@ credit.addEventListener('input', createListener(isValidCredit));
 //submit button
 const register = document.querySelector('button');
 register.addEventListener('click', (e) => {
-  console.log('test');
   if(!isValidUsername(name.value)) {
+    name.style.borderColor = 'red';
     e.preventDefault();
-    console.log('yes');
+  } else if(!isValidEmail(email.value)) {
+    email.style.borderColor = 'red';
+    e.preventDefault();
+  } else if(totalCost === 0){
+    actError.style.display = '';
+    e.preventDefault();
+  } else if(payment.value === 'credit card') {
+      if(!isValidCredit(credit.value)){
+        credit.style.borderColor = 'red';
+        e.preventDefault();
+      } else if (!isValidZip(zip.value)) {
+        zip.style.borderColor = 'red';
+        e.preventDefault();
+      } else if (!isValidCvv(cvv.value)) {
+        cvv.style.borderColor = 'red';
+        e.preventDefault();
+      }
   }
 })
 
