@@ -17,7 +17,8 @@ const emailLabel = email.previousElementSibling;
 const errorMessage = document.createElement('p');
 const actError = document.createElement('h2');
 const credit = document.getElementById('cc-num');
-
+const emptyCC = document.createElement('p');
+const validCC = document.createElement('p');
 
 //gives newTheme element text and value
 newTheme.textContent = 'Please select a T-shirt theme.';
@@ -167,7 +168,7 @@ function isValidCvv(cvv) {
 
 
 
-//email and error message attributes
+//email error message attributes
 emailLabel.appendChild(errorMessage);
 email.className = 'error';
 emailLabel.className = 'email';
@@ -175,8 +176,19 @@ errorMessage.textContent = 'Please enter a valid email.';
 errorMessage.style.color = 'red';
 errorMessage.style.display = 'none';
 
+//cc empty error attributes
+cc.appendChild(emptyCC);
+emptyCC.textContent = 'Please enter a number between 13-16 digits.';
+emptyCC.style.color = 'red';
+emptyCC.style.display = 'none';
 
-//Set up events
+//cc valid error attributes
+cc.appendChild(validCC);
+validCC.textContent = 'Please enter a valid credit card number.';
+validCC.style.color = 'red';
+validCC.style.display = 'none';
+
+//Set up event
 function validOrInvalid(valid, element) {
   if (valid && element.className === 'error') {
     element.style.borderColor = 'red';
@@ -188,7 +200,7 @@ function validOrInvalid(valid, element) {
     errorMessage.style.display = 'none';
   }
 }
-
+//Set up event
 function createListener(validator) {
   return e => {
     const text = e.target.value;
@@ -207,33 +219,42 @@ cvv.addEventListener('input', createListener(isValidCvv));
 credit.addEventListener('input', createListener(isValidCredit));
 
 
-//submit button
+//submit filter (if validations are false the page won't reload)
 const register = document.querySelector('button');
 register.addEventListener('click', (e) => {
   if(!isValidUsername(name.value)) {
     name.style.borderColor = 'red';
     e.preventDefault();
   } else if(!isValidEmail(email.value)) {
+    errorMessage.style.display = '';
     email.style.borderColor = 'red';
     e.preventDefault();
   } else if(totalCost === 0){
     actError.style.display = '';
     e.preventDefault();
   } else if(payment.value === 'credit card') {
-      if(!isValidCredit(credit.value)){
+      if (credit.value === ''){
         credit.style.borderColor = 'red';
+        emptyCC.style.display = '';
+        e.preventDefault();
+      } else if(!isValidCredit(credit.value)){
+        credit.style.borderColor = 'red';
+        validCC.style.display = '';
+        emptyCC.style.display = 'none';
         e.preventDefault();
       } else if (!isValidZip(zip.value)) {
         zip.style.borderColor = 'red';
+        emptyCC.style.display = 'none';
+        validCC.style.display = 'none';
         e.preventDefault();
       } else if (!isValidCvv(cvv.value)) {
         cvv.style.borderColor = 'red';
+        emptyCC.style.display = 'none';
+        validCC.style.display = 'none';
         e.preventDefault();
       }
   }
 })
-
-
 
 //sets focus to the name input when the page is first loaded
 document.getElementById("name").focus();
