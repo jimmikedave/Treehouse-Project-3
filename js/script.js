@@ -7,6 +7,17 @@ const activity = document.createElement('h2');
 const act = document.querySelector('.activities');
 const actInput = document.querySelectorAll('.activities input');
 let totalCost = 0;
+const payment = document.getElementById('payment');
+const cc = document.getElementById('credit-card');
+const paypal = document.getElementById('paypal');
+const bitcoin = document.getElementById('bitcoin');
+const name = document.getElementById('name');
+const email = document.getElementById('mail');
+const emailLabel = email.previousElementSibling;
+const errorMessage = document.createElement('p');
+const actError = document.createElement('h2');
+const credit = document.getElementById('cc-num');
+
 
 //gives newTheme element text and value
 newTheme.textContent = 'Please select a T-shirt theme.';
@@ -25,12 +36,15 @@ jobList.addEventListener('change', (e) =>{
   }
 })
 
+const colorDiv = document.getElementById('colors-js-puns');
+
 //displays newTheme when no design is selected when the page is first loaded
 const design = () => {
   if (theme.value === 'Select Theme'){
     color[0].style.display = 'block';
+    colorDiv.style.display = 'none';
     for(i = 1; i < 7; i += 1){
-      color[i].style.display = 'none';
+    color[i].style.display = 'none';
     }
   }
 }
@@ -46,6 +60,7 @@ if (e.target.value === 'js puns'){
     color[i].style.display = 'block';
   }
   color[0].style.display = 'none';
+  colorDiv.style.display = '';
 } else if (e.target.value === 'heart js'){
   for (i = 1; i < 4; i += 1){
     color[i].style.display = 'none';
@@ -54,11 +69,13 @@ if (e.target.value === 'js puns'){
     color[i].style.display = 'block';
   }
   color[0].style.display = 'none';
+  colorDiv.style.display = '';
 } else {
   color[0].style.display = 'block';
   for(i = 1; i < 7; i += 1){
     color[i].style.display = 'none';
     }
+  colorDiv.style.display = 'none';
   }
 })
 
@@ -77,10 +94,20 @@ act.addEventListener('change', (e) => {
   if (totalCost > 0){
     activity.textContent = `Total: $${totalCost}`;
     activity.style.display = '';
+    actError.style.display = 'none';
   } else if(totalCost === 0) {
     activity.style.display = 'none';
+    actError.style.display = '';
+
   }
 })
+
+//activity error element and attributes
+act.appendChild(actError);
+actError.textContent = 'Please choose at least one activity.';
+actError.style.color = 'red';
+actError.style.display = 'none';
+
 
 //disables blocks that have conflicting times if checkboxes are checked
 act.addEventListener('change', (e) => {
@@ -98,24 +125,110 @@ act.addEventListener('change', (e) => {
   }
 })
 
-//display payment based on the payment options
+//displays payment method when option is selected
+payment.addEventListener('change', (e) => {
+  if (e.target.value === 'credit card'){
+    cc.style.display = '';
+    paypal.style.display = 'none';
+    bitcoin.style.display = 'none';
+  } else if (e.target.value === 'paypal'){
+    cc.style.display = 'none';
+    paypal.style.display = '';
+    bitcoin.style.display = 'none';
 
-//display credit card with #credit-card div and hide paypal and bitcoin information
+  } else if (e.target.value ==='bitcoin'){
+    cc.style.display = 'none';
+    paypal.style.display = 'none';
+    bitcoin.style.display = '';
+  }
+})
 
-//when paypal is chosen display info, hide cc and Bitcoin
+//validate username
+function isValidUsername(username) {
+  return /^[a-z\sA-Z]+$/.test(username);
+}
+//validate email
+function isValidEmail(email) {
+  return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+}
 
-//when bitcoin is chosen display info, hide cc and PayPal
+//credit card card Number (add conditional 13-16 numbers)
+function isValidCredit(credit) {
+  return /^\d{4}\D*\d{4}\D*\d{4}\D*\d{4}$/.test(credit);
+}
+//zip Code
+function isValidZip(zip) {
+  return /^\d{5}$/.test(zip);
+}
+//CVV
+function isValidCvv(cvv) {
+  return /^\d{3}$/.test(cvv);
+}
 
 
 
+//email and error message attributes
+emailLabel.appendChild(errorMessage);
+email.className = 'error';
+emailLabel.className = 'email';
+errorMessage.textContent = 'Please enter a valid email.';
+errorMessage.style.color = 'red';
+errorMessage.style.display = 'none';
+
+
+//Set up events
+function validOrInvalid(valid, element) {
+  if (valid && element.className === 'error') {
+    element.style.borderColor = 'red';
+    errorMessage.style.display = '';
+  } else if (valid) {
+    element.style.borderColor = 'red';
+  } else {
+    element.style.borderColor = 'rgb(111, 157, 220)';
+    errorMessage.style.display = 'none';
+  }
+}
+
+function createListener(validator) {
+  return e => {
+    const text = e.target.value;
+    const valid = validator(text);
+    const showTip = text !== "" && !valid;
+    const tooltip = e.target;
+    validOrInvalid(showTip, tooltip);
+  };
+}
+
+//validates the real time input of the targeted elements
+name.addEventListener('input', createListener(isValidUsername));
+email.addEventListener('input', createListener(isValidEmail));
+zip.addEventListener('input', createListener(isValidZip));
+cvv.addEventListener('input', createListener(isValidCvv));
+credit.addEventListener('input', createListener(isValidCredit));
+
+
+//submit button
+const register = document.querySelector('button');
+register.addEventListener('click', (e) => {
+  console.log('test');
+  if(!isValidUsername(name.value)) {
+    e.preventDefault();
+    console.log('yes');
+  }
+})
 
 
 
-
-
-
+//sets focus to the name input when the page is first loaded
+document.getElementById("name").focus();
 
 //hides the input bar when the page first loads
 otherTitle.style.display = 'none';
-//sets focus to the name input when the page is first loaded
-document.getElementById("name").focus();
+
+//disables select payment method option
+payment[0].disabled = true;
+
+//hides payment methods until selected
+cc.style.display = 'none';
+paypal.style.display = 'none';
+bitcoin.style.display = 'none';
