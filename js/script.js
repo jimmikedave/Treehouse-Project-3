@@ -264,8 +264,9 @@ otherTitle.style.display = 'none';
 
 //disables select payment method option
 payment[0].disabled = true;
+payment[1].selected = true;
 
-//hides payment methods until selected
-cc.style.display = 'none';
+//show cc and hide pp/bitcoin
+cc.style.display = '';
 paypal.style.display = 'none';
 bitcoin.style.display = 'none';
